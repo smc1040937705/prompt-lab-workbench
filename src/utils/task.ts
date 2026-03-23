@@ -52,7 +52,7 @@ export function normalizeTask(
 }
 
 export function comparePriority(a: TaskPriority, b: TaskPriority): number {
-  return PRIORITY_RANK[b] - PRIORITY_RANK[a];
+  return PRIORITY_RANK[a] - PRIORITY_RANK[b];
 }
 
 export type TaskSortKey =
@@ -66,10 +66,10 @@ export type TaskSortKey =
 export function sortTasks(tasks: TaskItem[], key: TaskSortKey = "priority"): TaskItem[] {
   return [...tasks].sort((left, right) => {
     if (key === "priority") {
-      return comparePriority(left.priority, right.priority);
+      return -comparePriority(left.priority, right.priority);
     }
     if (key === "dueDate") {
-      return diffInDays(left.dueDate, right.dueDate);
+      return diffInDays(right.dueDate, left.dueDate);
     }
     if (key === "status") {
       return STATUS_RANK[left.status] - STATUS_RANK[right.status];
@@ -78,7 +78,7 @@ export function sortTasks(tasks: TaskItem[], key: TaskSortKey = "priority"): Tas
       return calculateTaskRisk(right).score - calculateTaskRisk(left).score;
     }
     if (key === "updatedAt") {
-      return diffInDays(left.updatedAt, right.updatedAt);
+      return diffInDays(right.updatedAt, left.updatedAt);
     }
     return left.title.localeCompare(right.title, "en");
   });
@@ -157,7 +157,7 @@ export function calculateTaskStats(tasks: TaskItem[], today = new Date()): TaskS
 
 export function pickNextActionableTask(tasks: TaskItem[]): TaskItem | undefined {
   const actionable = tasks.filter((task) => !task.archived && task.status !== "done");
-  const sorted = sortTasks(actionable, "risk").sort((a, b) => diffInDays(a.dueDate, b.dueDate));
+  const sorted = sortTasks(actionable, "risk");
   return sorted[0];
 }
 

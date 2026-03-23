@@ -309,6 +309,6 @@ export function reorderByRisk(tasks: TaskItem[], today: Date = new Date()): Task
     if (leftRisk !== rightRisk) {
       return rightRisk - leftRisk;
     }
-    return diffInDays(left.dueDate, right.dueDate);
+    return diffInDays(right.dueDate, left.dueDate);
   });
 }
